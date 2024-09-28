@@ -1,0 +1,51 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "glad2-fortran"
+dynamic = ["version"]
+description = "Fortran GL generator extension for glad2."
+readme = "README.md"
+license = {file = "LICENSE"}
+authors = [ {name = "Gaétan Jalin"} ]
+maintainers = [ {name = "Gaétan Jalin"} ]
+dependencies = ["Jinja2>=2.7,<4.0","glad2>=2.0.7"]
+classifiers = [
+    'Development Status :: 4 - Beta',
+    'Environment :: Console',
+    'Intended Audience :: Developers',
+    'Intended Audience :: Education',
+    'Intended Audience :: Science/Research',
+    'License :: OSI Approved :: MIT License',
+    'Natural Language :: English',
+    'Operating System :: OS Independent',
+    'Programming Language :: Python :: 3',
+    'Programming Language :: Python :: 3.8',
+    'Programming Language :: Python :: 3.9',
+    'Programming Language :: Python :: 3.10',
+    'Programming Language :: Python :: 3.11',
+    'Topic :: Games/Entertainment',
+    'Topic :: Multimedia :: Graphics',
+    'Topic :: Multimedia :: Graphics :: 3D Rendering',
+    'Topic :: Software Development',
+    'Topic :: Software Development :: Build Tools',
+    'Topic :: Utilities'
+]
+keywords = ["opengl", "glad", "generator", "fortran", "gl"]
+
+[project.urls]
+Source = "https://github.com/AarnoldGad/glad-fortran"
+
+[project.entry-points."glad.generator"]
+fortran = "glad.generator.fortran.__init__:FortranGenerator"
+
+[tool.setuptools]
+platforms = ["any"]
+
+[tool.setuptools.dynamic]
+version = {attr = "glad-fortran.__version__"}
+
+[tool.setuptools.packages]
+find = {}
+

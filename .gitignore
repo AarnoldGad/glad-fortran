@@ -1,0 +1,50 @@
+# Folders
+
+.cache/
+.archives/
+
+# Projects
+
+.idea
+.vs/
+.vscode/
+*.kdev_include_paths
+*.xcworkspace
+*.xcodeproj/
+*.sln
+*.vcxproj*
+*.kdev4
+*.swp
+
+# Binaries
+
+lib/
+bin/
+build/
+obj/
+*.o
+*.a
+*.out
+*.lib
+*.dylib
+*.exe
+*.dll
+*.so
+
+# Misc
+
+*.DS_Store
+dist/
+*.pyc
+/*.xml
+main.c
+*.diff
+*.egg-info
+/khrplatform.h
+/eglplatform.h
+/vk_platform.h
+/glad-rs/
+/rust/
+target/
+Cargo.lock
+
