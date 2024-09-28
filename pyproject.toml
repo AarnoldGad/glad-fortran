@@ -38,13 +38,13 @@ keywords = ["opengl", "glad", "generator", "fortran", "gl"]
 Source = "https://github.com/AarnoldGad/glad-fortran"
 
 [project.entry-points."glad.generator"]
-fortran = "glad.generator.fortran.__init__:FortranGenerator"
+fortran = "glad_fortran.generator.fortran.__init__:FortranGenerator"
 
 [tool.setuptools]
 platforms = ["any"]
 
 [tool.setuptools.dynamic]
-version = {attr = "glad-fortran.__version__"}
+version = {attr = "glad_fortran.__version__"}
 
 [tool.setuptools.packages]
 find = {}
