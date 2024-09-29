@@ -1,1 +1,1 @@
-recursive-include glad_fortran *.f90
+recursive-include glad_fortran *.f90 *.F90 *.h

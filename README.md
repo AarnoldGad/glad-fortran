@@ -9,7 +9,10 @@
 ## Description
 
 Fortran generator extension for [glad2](https://github.com/Dav1dde/glad).
+
 Currently supports OpenGL.
+
+Requires Fortran 2018.
 
 ## Examples
 

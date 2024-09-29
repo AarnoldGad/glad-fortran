@@ -141,7 +141,7 @@ def proc_type(command):
         return 'subroutine'
 
 
-def return_type_interface(command, is_apple):
+def return_type_interface(command):
     type_ = command.proto.ret
 
     if type_ is None:
@@ -165,12 +165,12 @@ def return_type_interface(command, is_apple):
     elif is_real(parsed_type):
         return 'real(kind={})'.format(parsed_type.type)
     elif is_GLhandleARB(parsed_type):
-        return GLhandleARB_type(is_apple)
+        return macro_type(parsed_type.type)
     else:
         raise NotImplementedError
 
 
-def return_type_impl(command, is_apple):
+def return_type_impl(command):
     type_ = command.proto.ret
     parsed_type = type_ if isinstance(type_, ParsedType) else ParsedType.from_string(type_)
 
@@ -186,12 +186,12 @@ def return_type_impl(command, is_apple):
     elif is_real(parsed_type):
         return 'real(kind={})'.format(parsed_type.type)
     elif is_GLhandleARB(parsed_type):
-        return GLhandleARB_type(is_apple)
+        return macro_type(parsed_type.type)
     else:
         raise NotImplementedError
 
 
-def type_interface(type_, is_apple):
+def type_interface(type_):
     if type_ is None:
         raise NotImplementedError
 
@@ -223,7 +223,7 @@ def type_interface(type_, is_apple):
     elif is_real(parsed_type):
         type_decl = 'real(kind={})'.format(parsed_type.type)
     elif is_GLhandleARB(parsed_type):
-        type_decl = GLhandleARB_type(is_apple)
+        type_decl = macro_type(parsed_type.type)
     else:
         raise RuntimeError('Unsupported type: {} pointer {}'.format(parsed_type.type, parsed_type.is_pointer))
 
@@ -231,7 +231,7 @@ def type_interface(type_, is_apple):
        (parsed_type.is_pointer == 1 and is_void(parsed_type)) or \
        is_typedef_funptr(parsed_type) or \
        is_typedef_ptr(parsed_type) or is_cl_ptr(parsed_type) or \
-       (is_GLhandleARB(parsed_type) and is_apple):
+       is_GLhandleARB(parsed_type):
         type_decl = type_decl + ', value'
     elif is_optional_type(parsed_type):
         type_decl = type_decl + ', optional'
@@ -256,7 +256,7 @@ def int_var(param):
         raise RuntimeError('Unsupported type: {} pointer {}'.format(parsed_type.type, parsed_type.is_pointer))
 
 
-def type_impl(type_, is_apple):
+def type_impl(type_):
     parsed_type = type_ if isinstance(type_, ParsedType) else ParsedType.from_string(type_)
 
     type_decl = ''
@@ -281,7 +281,7 @@ def type_impl(type_, is_apple):
     elif is_typedef_funptr(parsed_type):
         type_decl = 'type(c_funptr)'
     elif is_GLhandleARB(parsed_type):
-        type_decl = GLhandleARB_type(is_apple)
+        type_decl = macro_type(parsed_type.type)
     else:
         raise RuntimeError('Unsupported type: {} pointer {}'.format(parsed_type.type, parsed_type.is_pointer))
 
@@ -451,17 +451,12 @@ def proc_pointer(name):
     return 'glad_' + name
 
 
-def GLhandleARB_type(is_apple):
-    return 'type(c_ptr)' if is_apple else 'integer(kind=c_int)'
+def macro_type(type_name):
+    return 'type(' + type_name + ')'
 
 
 class FortranConfig(Config):
-    APPLE = ConfigOption(
-        converter=bool,
-        default=False,
-        description='Required when building for macOS to ' +
-                    'properly handle GLhandleARB type and such.'
-    )
+    pass
     # TODO 
     #ALIAS = ConfigOption(
     #    converter=bool,
@@ -489,10 +484,10 @@ class FortranGenerator(JinjaGenerator):
             enum_type=jinja2_contextfilter(lambda ctx, enum: enum_type(enum, ctx['feature_set'])),
             enum_value=jinja2_contextfilter(lambda ctx, enum: enum_value(enum, ctx['feature_set'])),
             proc_type=proc_type,
-            return_type_interface=jinja2_contextfilter(lambda ctx, command: return_type_interface(command, ctx['options']['apple'])),
-            return_type_impl=jinja2_contextfilter(lambda ctx, command: return_type_impl(command, ctx['options']['apple'])),
-            type_interface=jinja2_contextfilter(lambda ctx, type_: type_interface(type_, ctx['options']['apple'])),
-            type_impl=jinja2_contextfilter(lambda ctx, type_: type_impl(type_, ctx['options']['apple'])),
+            return_type_interface=return_type_interface,
+            return_type_impl=return_type_impl,
+            type_interface=type_interface,
+            type_impl=type_impl,
             format_result=format_result,
             int_var=int_var,
             args=format_args,
@@ -538,7 +533,8 @@ class FortranGenerator(JinjaGenerator):
 
     def get_templates(self, spec, feature_set, config):
         return [
-            ('base_template.f90', 'glad-{}/src/{}.f90'.format(feature_set.name, spec.name))
+            ('base_template.F90', 'glad-{}/src/{}.F90'.format(feature_set.name, spec.name)),
+            ('types.h', 'glad-{}/include/glad/types.h'.format(feature_set.name))
         ]
 
     def modify_feature_set(self, spec, feature_set, config):
