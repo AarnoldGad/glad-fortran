@@ -520,8 +520,9 @@ class FortranGenerator(JinjaGenerator):
         if extensions is not None:
             extensions = set(extensions)
 
-            if config['ALIAS']:
-                extensions.update(find_extensions_with_aliases(spec, api, version, profile, extensions))
+        # TODO
+        #    if config['ALIAS']:
+        #        extensions.update(find_extensions_with_aliases(spec, api, version, profile, extensions))
 
         return JinjaGenerator.select(self, spec, api, version, profile, extensions, config, sink=sink)
 
