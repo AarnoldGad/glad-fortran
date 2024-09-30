@@ -10,13 +10,35 @@
 
 Fortran generator extension for [glad2](https://github.com/Dav1dde/glad).
 
-Currently supports OpenGL.
-
-Requires Fortran 2018.
+It can currently only generate interfaces for OpenGL, but support for other specifications is coming soon.
+The generated fortran code requires at least Fortran 2018 and a preprocessor to compile.
 
 ## Examples
 
-*Coming soon*
+```fortran
+program gl_glfw
+    ! Fortran bindings for GLFW: https://github.com/AarnoldGad/glf90w
+    use glf90w
+    ! OpenGL core profile generated using: glad --api gl:core=3.3 --out-path . fortran
+    use gl
+
+! Required for a few platform-dependent type definitions
+#include "glad/types.h"
+
+    implicit none
+    ! ...
+
+    window = glfwCreateWindow(800, 600, 'GLF90W Basic App')
+    call glfwMakeContextCurrent(window)
+
+    if (.not. gladLoadGL(glfwGetProcAddress)) stop 'Failed to initialise OpenGL context!'
+
+    ! ...
+
+end program gl_glfw
+```
+
+Full example can be found in [gl\_glfw.F90](./examples/gl_glfw.F90).
 
 ## Credits
 
@@ -26,4 +48,5 @@ Requires Fortran 2018.
 ## License
 
 See [LICENSE](/LICENSE).
+cf. [glad](https://github.com/Dav1dde/glad) for details on the license of the generated code.
 
